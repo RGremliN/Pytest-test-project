@@ -2,6 +2,7 @@ import pytest
 
 from pages.product_page import ProductPage
 from pages.login_page import LoginPage
+from pages.basket_page import BasketPage
 
 @pytest.mark.skip
 @pytest.mark.parametrize('promo_offer', ['newYear','newYear2019','offer0','offer1','offer2','offer3','offer4','offer5','offer6',pytest.param("offer7", marks=pytest.mark.xfail),'offer8','offer9'])
@@ -14,12 +15,14 @@ def test_guest_can_add_product_to_basket(browser, promo_offer):
     page.should_be_success_message_contains_product_title()
     page.should_be_basket_price_in_success_message_equal_product_price()
 
+@pytest.mark.skip
 def test_guest_should_see_login_link_on_product_page(browser):
     link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
     page = ProductPage(browser, link)
     page.open()
     page.should_be_login_link()
 
+@pytest.mark.skip
 def test_guest_can_go_to_login_page_from_product_page (browser):
     link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
     page = ProductPage(browser, link) # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
@@ -27,6 +30,15 @@ def test_guest_can_go_to_login_page_from_product_page (browser):
     page.go_to_login_page() 
     page = LoginPage(browser, link)       # выполняем метод страницы - переходим на страницу логина
     page.should_be_login_page()    # проверяем что мы перешли на страницу логина   
+
+def test_guest_cant_see_product_in_basket_opened_from_product_page (browser):
+    link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
+    page = ProductPage(browser, link) # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
+    page.open()                    # открываем страницу
+    page.go_to_basket_page_by_header_button()
+    page = BasketPage(browser, link)
+    page.should_be_empty_basket()
+    page.should_be_empty_basket_text()
 
 @pytest.mark.skip
 def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
